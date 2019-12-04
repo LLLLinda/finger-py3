@@ -100,6 +100,7 @@ def isloop(state, game): #tells if a game has encountered a loop
   return False
 
 #output
+
 def locate(state): #locate state number for a SORTED state
   if state[:2]=="01": h=0; t=13
   elif state[:2]=="02": h=14; t=27
@@ -116,7 +117,7 @@ def locate(state): #locate state number for a SORTED state
   elif state[:2]=="34": h=168; t=181
   elif state[:2]=="44": h=182; t=195
   else: 
-    return print("Cannot identify state", state, "! Did you forget to swap state order?")
+    return
 
   for target in range(h,t+1):
     if states[target][0]==state: break
@@ -170,7 +171,7 @@ def foresee(state): #simple heuristics for immediate state
   else:
     prev=state[:-4]
   state=state[-4:]
-  if state.isnumeric()==True:
+  if state.isdigit()==True:
     if prev.count("/")%2==0: #going to be my turn
       if ((state[0]=="0" or state[1]=="0") and #win if 0Xab where X+a/b=>0 or (X+a/b=6 and a,b!=0/1,4) or (X=1 and a,b!=0,1)
           (Overflow(sum([int(x) for x in list(state[:2])])+int(state[2]))==0 or 
@@ -210,7 +211,7 @@ def foresee(state): #simple heuristics for immediate state
   return prev+state
 
 def extract(state): #remove any suffix to the state
-  while state[-4:].isnumeric()==False:
+  while state[-4:].isdigit()==False:
     state=state[:-5]
   state=state[:-5]
   return state
@@ -219,7 +220,7 @@ def extract(state): #remove any suffix to the state
 def think(steps, forward): #create list of list for derived state from a path function result
   if forward>=2:
     for i in range(len(steps)):
-      if steps[i][-4:].isnumeric()==True:
+      if steps[i][-4:].isdigit()==True:
         steps[i]=[steps[i][-4:], think([foresee(x) for x in path(steps[i], True)], forward-1)]
   return steps
 
@@ -242,7 +243,7 @@ def exclude(steps): #(de)notate moves that will cause the opponent player to win
         #if the turn after next has only one choice AND there is no other choice following AND it is either a win or lose
         for j in range(len(steps)):
           if type(steps[j])==type([]):
-            if type(steps[j][1][0])==type([]) or steps[j][1][0][-4:].isnumeric() or steps[j][1][0][-4:]=="loop":
+            if type(steps[j][1][0])==type([]) or steps[j][1][0][-4:].isdigit() or steps[j][1][0][-4:]=="loop":
               #any other path with undetermined outcome or loop after the next turn will do
               avoidable=True
         if avoidable:
@@ -260,7 +261,7 @@ def dive(steps, leaf): #process results from the above think function
     if type(steps[i])!=type([]):
       order=[x[0] for x in leaf].index(steps[i][:len(leaf[0][0])])
       leaf[order][1][0]+=1
-      if steps[i][-4:].isnumeric()==False:
+      if steps[i][-4:].isdigit()==False:
         if steps[i][-4:]=="wins":
           if steps[i].count("/")%2==1:
             impr=False
@@ -373,3 +374,8 @@ def comp(state, forward): #wrap-up function for computing the next step
 #for i in range(len(states)):
   #l=decision(comp(states[i][0],5))
   #if l=="x": print(i)
+
+
+
+def handle(req):
+  return comp(str(req), 5)
