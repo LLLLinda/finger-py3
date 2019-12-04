@@ -1,3 +1,11 @@
+import requests
+
+def comp(state, forward):
+  r = requests.get("http://localhost:8080/function/<comp.py function name>", data= state)
+  return r.json()
+
+
+
 #setup
 public=[]
 haveMod=True
