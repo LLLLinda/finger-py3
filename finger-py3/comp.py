@@ -100,26 +100,6 @@ def isloop(state, game): #tells if a game has encountered a loop
   return False
 
 #output
-def show(data, mode=0): #show all states, 0 = readable, 1 = plain txt, 2 = csv
-  for x in range(len(data)):
-    if mode==0: 
-      print(" "*(3-len(str(x))), x, "   ", data[x][0], " ---", sep="", end="")
-    elif mode==1:
-      print(data[x][0], " ", sep="", end="")
-    elif mode==2:
-      print(data[x][0],sep="", end="")
-
-    for y in range(1, len(data[x])):
-      if mode==0 or mode==1:
-        print(" ",data[x][y], sep="", end="")
-      elif mode==2:
-        print(",",data[x][y], sep="", end="")
-    
-    if mode==0 or mode==1:
-      print()
-    else:
-      print("\\n")
-
 def locate(state): #locate state number for a SORTED state
   if state[:2]=="01": h=0; t=13
   elif state[:2]=="02": h=14; t=27
