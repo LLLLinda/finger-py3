@@ -119,7 +119,6 @@ OpenFaaS 使用 [Prometheus](https://prometheus.io/) 進行監控數據的採集
 
 就會看到 Prometheus，切換到 Graph Tab，可以輸入條件並產生圖表
 
-![serverless](https://github.com/likeitresource/run_serverless_in_few_minutes/blob/master/images/prometheus.png)
 
 
 ## 參考資料
