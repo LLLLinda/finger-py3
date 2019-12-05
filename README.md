@@ -71,8 +71,12 @@ Creating alias 'faas' for 'faas-cli'.
 
 run simple redis server
 ```
+$ bash scripts/bootstrap.sh latest
 $ git clone https://github.com/thomasjpfan/redis-cluster-docker-swarm.git
 $ cd redis-cluster-docker-swarm/
+$ bash scripts/bootstrap.sh latest
+$ docker run --rm --network func_functions -ti redis:4.0.11-alpine redis-cli -h redis
+
 ```
 
 
@@ -93,6 +97,8 @@ finger-py3\requirements.txt # 若需要 python third-package，填入此處
 建置 function
 ```
 $ faas-cli build -f finger-py3.yml
+$ faas-cli build -f redis-fn.yml
+$ faas-cli build -f one-process.yml
 ```
 
 ## 執行 Function
@@ -102,14 +108,18 @@ $ faas-cli build -f finger-py3.yml
 
 ```
 $ faas-cli deploy -f finger-py3.yml --gateway http://192.168.64.129:8080
+$ faas-cli deploy -f redis-fn.yml --gateway http://192.168.64.129:8080
+$ faas-cli deploy -f one-process.yml --gateway http://192.168.64.129:8080
 ```
 
 先用 curl 測試， '-d "jess"' 表示要產生哪一位使用者的 otp
 ```
-$ curl -XPOST 192.168.64.129:8080/function/finger-py3 -d "{\"playername\":\"zoe\",\"current_stat\":\"1111\"}"
+$ curl -XPOST 192.168.64.129:8080/function/finger-py3 -d "1111"
+$ curl -XPOST 192.168.64.129:8080/function/redis-fn -d "{\"playername\":\"zoe\",\"current_stat\":\"1111\"}"
+$ curl -XPOST 192.168.64.129:8080/function/finger-py3 -d "1111"
 ```
 
-回到 OpenFaaS Portal，會看到 my-otp 已經在列表上。請依照下圖步驟，逐一輸入執行。步驟3，即是發出 request，步驟4即是回傳值。
+回到 OpenFaaS Portal，會看到 functions 已經在列表上。請依照下圖步驟，逐一輸入執行。步驟3，即是發出 request，步驟4即是回傳值。
 
 ## 觀察監控數據
 
@@ -124,3 +134,4 @@ OpenFaaS 使用 [Prometheus](https://prometheus.io/) 進行監控數據的採集
 ## 參考資料
 
 * [Your first serverless Python function with OpenFaaS](https://blog.alexellis.io/first-faas-python-function/)
+* [Redis cluster cache configuration for docker swarm](https://github.com/thomasjpfan/redis-cluster-docker-swarm)
