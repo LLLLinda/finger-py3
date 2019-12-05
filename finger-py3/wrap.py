@@ -1,7 +1,7 @@
 import requests
 
 def comp(state, forward):
-  r = requests.get("http://localhost:8080/function/<comp.py function name>", data= state)
+  r = requests.get("http://localhost:8080/function/one-process", data= state)
   return r.json()
 
 
