@@ -1,6 +1,5 @@
 # finger-py3
 4651 serverless implementation
-![serverless](https://github.com/likeitresource/run_serverless_in_few_minutes/blob/master/images/serverless.png)
 
 作業系統使用 [ubuntu 18.04](http://releases.ubuntu.com/18.04/)。安裝完使用以下指令更新 OS。
 
