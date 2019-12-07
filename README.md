@@ -119,7 +119,7 @@ $ curl -XPOST 192.168.64.129:8080/function/redis-fn -d "{\"playername\":\"zoe\",
 $ curl -XPOST 192.168.64.129:8080/function/one-process -d "1111"
 ```
 
-回到 OpenFaaS Portal，會看到 functions 已經在列表上。請依照下圖步驟，逐一輸入執行。步驟3，即是發出 request，步驟4即是回傳值。
+回到 OpenFaaS Portal，會看到 functions 已經在列表上。請
 
 ## 觀察監控數據
 
