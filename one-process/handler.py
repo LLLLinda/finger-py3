@@ -320,6 +320,7 @@ def comp(state, forward): #wrap-up function for computing the next step
   print("State tree:")
   draw(tree)
   print("\nResult statistics:")
+  print("path: TotalPath, Wins, Loses, Loops, Unsettled")
   for i in range(len(leaf)):
     print(leaf[i])
   #return leaf
