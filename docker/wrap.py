@@ -2,8 +2,7 @@ import requests
 
 def comp(state, forward):
   r = requests.post("http://localhost:8080/function/one-process", data= state)
-  print(r.text)
-  return r.text
+  return r.text.strip()
 
 
 
