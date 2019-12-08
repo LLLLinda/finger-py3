@@ -1,7 +1,9 @@
 from tkinter import *
+from tkinter import ttk
 from tkinter import messagebox
 from functools import partial
 import requests
+from requests.exceptions import Timeout
 
 def comp(state, forward):
     prompt("bot is thinking the next move...")
@@ -10,8 +12,9 @@ def comp(state, forward):
     b1.config(state="disabled")
     b2.config(state="disabled")
     b3.config(state="disabled")
+    ls.config(state="disabled")
 
-    r = requests.post("http://a04f8d4a2199611eaba6906e7112dd5b-1674793614.ap-northeast-1.elb.amazonaws.com:8080/function/one-process", data= state)
+    r = requests.post(url, data= state)
     game = str(r.text.strip())
 
     top.configure(state="normal")
@@ -28,9 +31,6 @@ def comp(state, forward):
     b2.config(text=game[-2])
     b3.config(text=game[-1])
 
-    b2.config(state="normal")
-    b3.config(state="normal")
-
     is0()
 
     if not (str(b2["text"])=="0" and str(b3["text"])=="0"):
@@ -38,9 +38,10 @@ def comp(state, forward):
 
 
 root=Tk()
+root.title('Fingers')
 
 top = Text(root,width=50, height=10)
-top.grid(row = 0, column = 0, sticky=N, columnspan=3)
+top.grid(row = 1, column = 0, sticky=N, columnspan=3)
 
 top.insert(INSERT, " ___\n")
 top.insert(INSERT, "|    *    _    __    ___    _   __\n")
@@ -108,38 +109,75 @@ def is0(tobot=False):
                     b.config(state="disabled")
                 else:
                     b.config(state="normal")
+        
+        ls.set("")
+
         if tobot:
             global game
             game=str(game)+"/"+str(b0["text"])+str(b1["text"])+str(b2["text"])+str(b3["text"])
             comp(game,5)
+        else:
+            swap=False
+            arrg=[]
+            if int(b2["text"])>int(b3["text"]):
+                swap=True
+                k=int(b3["text"])
+            else:
+                k=int(b2["text"])
+            l=int(b2["text"])+int(b3["text"])-k
+            count=0
+            for a in range(k+l):
+                if (a<=(k+l-a)% 5) and not((a==k) and ((k+l-a)%5==l)):
+                    if a!=0 or (k+l-a)%5!=0:
+                        count+=1
+                        if not swap: 
+                            arrg.append(str(a)+"   "+str((k+l-a)%5))
+                        else: 
+                            arrg.append(str((k+l-a)%5)+"   "+str(a))
+            if len(arrg)==0:
+                ls.config(state="disabled")
+            else:
+                ls.config(state="readonly")
+                ls.config(values=arrg)
+            
 
     else:
         b0.config(state="disabled")
         b1.config(state="disabled")
         b2.config(state="disabled")
         b3.config(state="disabled")
+        ls.config(state="disabled")
 
 def restart():
-    MsgBox = messagebox.askquestion('Restart','Start a new game?',icon = 'warning')
+    MsgBox = messagebox.askquestion('Restart','Start a new game?')
     if MsgBox == 'yes':
        All()
 
 def quit():
-    MsgBox = messagebox.askquestion ('Quit','Close applicaton?',icon = 'warning')
+    MsgBox = messagebox.askquestion ('Quit','Close applicaton?')
     if MsgBox == 'yes':
        root.destroy()
         
+dum= Label(root, text = "\nbot") 
+dum.grid(row=2, column=1)
+
+dum1= Label(root, text = "\n\nArrange...") 
+dum1.grid(row=6, column=1)
+
+dum2= Label(root, text = "you\n\n") 
+dum2.grid(row=8, column=1)
+
 b0 = Button (root, text=1, width=10, height=2)
-b0.grid(row=1, column=0)
+b0.grid(row=3, column=0)
 
 b1 = Button (root, text=1, width=10, height=2)
-b1.grid(row=1, column=2)
+b1.grid(row=3, column=2)
 
 b2 = Button (root, text=1, width=10, height=2)
-b2.grid(row=4, column=0)
+b2.grid(row=7, column=0)
 
 b3 = Button (root, text=1, width=10, height=2)
-b3.grid(row=4, column=2)
+b3.grid(row=7, column=2)
 
 b0.config(command=partial(oppo,b0))
 b1.config(command=partial(oppo,b1))
@@ -147,10 +185,22 @@ b2.config(command=partial(press,b2))
 b3.config(command=partial(press,b3))
 
 r = Button (root, text='Restart',width=10, height=2, command=restart)
-r.grid(row=2, column=1)
+r.grid(row=4, column=1)
 
 q = Button (root, text='Quit',width=10, height=2, command=quit)
-q.grid(row=3, column=1)
+q.grid(row=5, column=1)
+
+ls= ttk.Combobox(root, state="readonly", width=10, height=2)
+ls.grid(row=7, column=1)
+
+def selected(event):
+  b2.config(text=ls.get()[0])
+  b3.config(text=ls.get()[-1])
+  ls.config(values=[])
+  is0(True)
+
+ls.bind("<<ComboboxSelected>>", selected)
+
 
 ready=True
 
@@ -166,7 +216,7 @@ def GameOver():
     return False
 
 def All():
-    MsgBox = messagebox.askquestion('Welcome!','How would you like to start the game?\n    -  "Yes"  to start FIRST,\n    -  "No"   to start NEXT.',icon = 'warning')
+    MsgBox = messagebox.askquestion('Welcome!','How would you like to start the game?\n    -  "Yes"  to start FIRST,\n    -  "No"   to start NEXT.')
     if MsgBox == 'yes':
         u=1
         prompt("You chose to start FIRST")
@@ -178,6 +228,8 @@ def All():
 
     for b in [b0,b1,b2,b3]:
         b.config(text="1")
+    
+    ls.set("")
 
     game="1111"
 
@@ -188,20 +240,41 @@ def All():
 
     if u==1:
         prompt("It's your turn!\n")
-        b2.config(state="normal")
-        b3.config(state="normal")
+        is0()
     else:
         comp(game,5)
 
 
+from tkinter.simpledialog import askstring
+from tkinter.messagebox import showinfo
+url = askstring('Configuration', 'Please enter Server URL of the bot:')
 
-MsgBox = messagebox.askquestion('Welcome!','How would you like to start the game?\n    -  "Yes"  to start FIRST,\n    -  "No"   to start NEXT.',icon = 'warning')
+if url=="":
+    root.destroy()
+else:
+    try:
+        response = requests.get(url, data="1111", timeout=5)
+    except Timeout:
+        showinfo("Error", 'Connection timeout, now quitting application.')
+        root.destroy()
+    else:
+        if response.status_code!=200:
+            showinfo("Error", "Connection error, now quitting application.")
+            root.destroy()
+        else:
+            showinfo("Success", "Connect successful.")
+
+
+
+
+
+MsgBox = messagebox.askquestion('Welcome!','How would you like to start the game?\n    -  "Yes"  to start FIRST,\n    -  "No"   to start NEXT.')
 if MsgBox == 'yes':
     u=1
-    prompt("You chose to start FIRST")
+    prompt("\nYou chose to start FIRST")
 else:
     u=2
-    prompt("You chose to start NEXT")
+    prompt("\nYou chose to start NEXT")
 
 prompt("Let's play!!\n")
 
@@ -215,8 +288,7 @@ b3.config(state="disabled")
 
 if u==1:
     prompt("It's your turn!\n")
-    b2.config(state="normal")
-    b3.config(state="normal")
+    is0()
 else:
     comp(game,5)
 
