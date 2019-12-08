@@ -317,9 +317,11 @@ def comp(state, forward): #wrap-up function for computing the next step
   leaf=[[i[:len(state)+5],[0,0,0,0,0]] for i in path(state)]
   tree=think([foresee(x) for x in path(state)],forward)
   dive(tree, leaf)
-  #draw(tree)
-  #for i in range(len(leaf)):
-    #print(leaf[i])
+  print("State tree:")
+  draw(tree)
+  print("\nResult statistics:")
+  for i in range(len(leaf)):
+    print(leaf[i])
   #return leaf
 
 #def decision(leaf):
@@ -329,13 +331,13 @@ def comp(state, forward): #wrap-up function for computing the next step
       return prev+turn(state)+"/"+turn(leaf[i][0][-4:])
 
   #win & 0 lose
+  import random
   a=[]
   for i in range(len(leaf)):
-    if leaf[i][1][1]>leaf[i][1][2] and leaf[i][1][2]==0:
-      if len(a)==0 or leaf[i][1][1]>a[1]:
-        a=[i,leaf[i][1][1]]
+    if leaf[i][1][0]==leaf[i][1][1] and leaf[i][1][1]!=0:
+      a.append(i)
   if len(a)>0:
-    return prev+turn(state)+"/"+turn(leaf[a[0]][0][-4:])
+    return prev+turn(state)+"/"+turn(leaf[a[random.randrange(0,len(a))]][0][-4:])
 
   #more win than lose
   a=[]
@@ -358,7 +360,6 @@ def comp(state, forward): #wrap-up function for computing the next step
   #return random item from leaf
   a=[]
   b=[]
-  import random
   for i in range(len(leaf)):
     if leaf[i][1][0]==0:
       b.append(i)
