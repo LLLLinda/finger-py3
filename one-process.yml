@@ -7,4 +7,6 @@ functions:
     lang: python3
     handler: ./one-process
     image: lindacheung/one-process:latest
+    secrets:
+      - dockerhub
 

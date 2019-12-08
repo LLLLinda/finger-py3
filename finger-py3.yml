@@ -9,3 +9,5 @@ functions:
     image: lindacheung/finger-py3:latest
     build_options:
       - dev
+    secrets:
+      - dockerhub

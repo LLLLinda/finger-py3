@@ -1,7 +1,7 @@
 import requests
 
 def comp(state, forward):
-  r = requests.post("http://990d4f91.ngrok.io/function/one-process", data= state)
+  r = requests.post("http://a04f8d4a2199611eaba6906e7112dd5b-1674793614.ap-northeast-1.elb.amazonaws.com:8080/function/one-process", data= state)
   return r.text.strip()
 
 
