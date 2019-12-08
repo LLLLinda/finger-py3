@@ -127,7 +127,7 @@ def locate(state): #locate state number for a SORTED state
     return print("Cannot identify state", state, "! Did you forget to swap state order?")
 
   for target in range(h,t+1):
-    if states[target][0]==state: break
+    if public[target][0]==state: break
   
   return(target)
 
