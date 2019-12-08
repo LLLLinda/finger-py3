@@ -16,7 +16,6 @@ Docker 安裝很簡單，只需:
 ```shellscrupt
 $ wget -O - https://get.docker.com | sudo bash
 ```
-再去泡杯茶 :tea:
 
 Docker安裝完，可以使用以下指令，將 linux 的使用者 (user) 加入 docker group，這樣一來，不用 root 權限即可以使用 Docker。
 
@@ -71,7 +70,7 @@ Creating alias 'faas' for 'faas-cli'.
 
 run simple redis server
 ```
-$ bash scripts/bootstrap.sh latest
+$ docker network create --attachable --driver overlay redis
 $ git clone https://github.com/thomasjpfan/redis-cluster-docker-swarm.git
 $ cd redis-cluster-docker-swarm/
 $ bash scripts/bootstrap.sh latest
@@ -119,7 +118,20 @@ $ curl -XPOST 192.168.64.129:8080/function/redis-fn -d "{\"playername\":\"zoe\",
 $ curl -XPOST 192.168.64.129:8080/function/one-process -d "1111"
 ```
 
-回到 OpenFaaS Portal，會看到 functions 已經在列表上。請
+回到 OpenFaaS Portal，會看到 functions 已經在列表上
+
+## client gui
+```
+docker build -t gui-client gui-client/
+xhost +
+docker run -it --env="DISPLAY" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" gui-client
+```
+## client docker image
+```
+docker build -t finger-client docker/
+docker run -it finger-client
+```
+
 
 ## 觀察監控數據
 
