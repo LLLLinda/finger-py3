@@ -224,16 +224,6 @@ def think(steps, forward): #create list of list for derived state from a path fu
         steps[i]=[steps[i][-4:], think([foresee(x) for x in path(steps[i], True)], forward-1)]
   return steps
 
-def draw(steps, depth=1): #draw the derived states from the above think function
-  '''Leave depth as 1!!!'''
-  for i in range(len(steps)):
-    if type(steps[i])!=type([]):
-      steps[i]=foresee(steps[i])
-      print("\t"*(depth-1), steps[i])
-    else:
-      print("\t"*(depth-1), steps[i][0])
-      draw(steps[i][1], depth+1)
-
 def exclude(steps): #(de)notate moves that will cause the opponent player to win immediately
   avoidable=False
   #strip=False
@@ -253,7 +243,6 @@ def exclude(steps): #(de)notate moves that will cause the opponent player to win
         exclude(steps[i][1])
     #elif steps[i][1][0][-4:]=="wins" or steps[i][1][0][-4:]=="lose":
       #strip=True?
-
 
 def dive(steps, leaf): #process results from the above think function
   i=0
@@ -317,19 +306,12 @@ def comp(state, forward): #wrap-up function for computing the next step
   leaf=[[i[:len(state)+5],[0,0,0,0,0]] for i in path(state)]
   tree=think([foresee(x) for x in path(state)],forward)
   dive(tree, leaf)
-  print("State tree:")
-  draw(tree)
-  print("\nResult statistics:")
-  print("path: TotalPath, Wins, Loses, Loops, Unsettled")
-  for i in range(len(leaf)):
-    print(leaf[i])
-  #return leaf
 
 #def decision(leaf):
   #must win
   for i in range(len(leaf)):
     if leaf[i][1][0]==leaf[i][1][1] and leaf[i][1][1]!=0:
-      return prev+turn(state)+"/"+turn(leaf[i][0][-4:])
+      return [prev+turn(state)+"/"+turn(leaf[i][0][-4:]), tree, leaf]
 
   #win & 0 lose
   import random
@@ -338,7 +320,7 @@ def comp(state, forward): #wrap-up function for computing the next step
     if leaf[i][1][0]==leaf[i][1][1] and leaf[i][1][1]!=0:
       a.append(i)
   if len(a)>0:
-    return prev+turn(state)+"/"+turn(leaf[a[random.randrange(0,len(a))]][0][-4:])
+    return [prev+turn(state)+"/"+turn(leaf[a[random.randrange(0,len(a))]][0][-4:]), tree, leaf]
 
   #more win than lose
   a=[]
@@ -347,7 +329,7 @@ def comp(state, forward): #wrap-up function for computing the next step
       if len(a)==0 or leaf[i][1][1]-leaf[i][1][2]>a[1]:
         a=[i,leaf[i][1][1]]
   if len(a)>0:
-    return prev+turn(state)+"/"+turn(leaf[a[0]][0][-4:])
+    return [prev+turn(state)+"/"+turn(leaf[a[0]][0][-4:]), tree, leaf]
 
   #most loops only
   a=[]
@@ -356,7 +338,7 @@ def comp(state, forward): #wrap-up function for computing the next step
       if len(a)==0 or leaf[i][1][3]>a[1]:
         a=[i,leaf[i][1][1]]
   if len(a)>0:
-    return prev+turn(state)+"/"+turn(leaf[a[0]][0][-4:])
+    return [prev+turn(state)+"/"+turn(leaf[a[0]][0][-4:]), tree, leaf]
 
   #return random item from leaf
   a=[]
@@ -367,9 +349,9 @@ def comp(state, forward): #wrap-up function for computing the next step
     else:
       a.append(i)
   if len(a)>0:
-    return prev+turn(state)+"/"+turn(leaf[a[random.randrange(0,len(a))]][0][-4:])
+    return [prev+turn(state)+"/"+turn(leaf[a[random.randrange(0,len(a))]][0][-4:]), tree, leaf]
   else:
-    return prev+turn(state)+"/"+turn(leaf[b[random.randrange(0,len(b))]][0][-4:])
+    return [prev+turn(state)+"/"+turn(leaf[b[random.randrange(0,len(b))]][0][-4:]), tree, leaf]
   
   #return "x"
 
